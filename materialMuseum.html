@@ -1,0 +1,58 @@
+<!DOCTYPE html>
+<html>
+<head>
+    <meta charset="utf-8">
+    <title>Three.js Material Museum</title>
+
+    <style>
+        body {
+            margin: 0;
+            overflow: hidden;
+            font-family: Arial, sans-serif;
+        }
+
+        #instructions {
+            position: absolute;
+            top: 10px;
+            left: 10px;
+            color: white;
+            background: rgba(0,0,0,0.7);
+            padding: 10px;
+            z-index: 100;
+        }
+    </style>
+</head>
+<body>
+<script type="importmap">
+{
+    "imports": {
+        "three": "https://unpkg.com/three@0.170.0/build/three.module.js",
+        "three/addons/": "https://unpkg.com/three@0.170.0/examples/jsm/"
+    }
+}
+</script>
+<script type="module" src="./materialMuseum.js"></script>
+<div id="instructions">
+    <h3>Material Museum Challenge</h3>
+
+    <p>
+        Explore the scene using the mouse.<br>
+        Orbit = Left Mouse<br>
+        Pan = Right Mouse<br>
+        Zoom = Scroll Wheel
+    </p>
+
+    <h4>Student Tasks</h4>
+
+    <ul>
+        <li>Change materials on objects</li>
+        <li>Experiment with roughness and metalness</li>
+        <li>Create a gold trophy</li>
+        <li>Create an ice sculpture</li>
+        <li>Add your own object</li>
+        <li>Add a mystery object using the best material</li>
+    </ul>
+
+</div>
+
+</html>
