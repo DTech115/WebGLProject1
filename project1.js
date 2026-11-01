@@ -6,7 +6,7 @@ import { OrbitControls } from 'three/addons/controls/OrbitControls.js';
 // ---------------------------------------------------
 
 const scene = new THREE.Scene();
-scene.background = new THREE.Color(0x222233);
+scene.background = new THREE.Color(0x0b0b12);
 
 // ---------------------------------------------------
 // Camera
@@ -39,6 +39,22 @@ document.body.appendChild(renderer.domElement);
 
 const controls = new OrbitControls(camera, renderer.domElement);
 
+// Keyboard State Object
+const keys = {};
+
+// Key Down
+window.addEventListener("keydown", (event) => {
+    keys[event.key.toLowerCase()] = true;
+});
+
+// Key Up
+window.addEventListener("keyup", (event) => {
+    keys[event.key.toLowerCase()] = false;
+});
+
+// Movement Speed
+const speed = 0.1;
+
 // ---------------------------------------------------
 // Lights
 // ---------------------------------------------------
@@ -66,16 +82,16 @@ const helper = new THREE.PointLightHelper(
     0.5
 );
 
-// placed above the gold sphere
-const spotLight = new THREE.SpotLight(
-    0xffffff,
-    100
-);
-spotLight.castShadow = true;
-spotLight.position.set(-9, 8, -4);
-spotLight.target.position.set(-9, 2, -4);
-scene.add(spotLight);
-scene.add(spotLight.target);
+// // placed above the gold sphere
+// const spotLight = new THREE.SpotLight(
+//     0xffffff,
+//     100
+// );
+// spotLight.castShadow = true;
+// spotLight.position.set(-9, 8, -4);
+// spotLight.target.position.set(-9, 2, -4);
+// scene.add(spotLight);
+// scene.add(spotLight.target);
 
 // const spotLightHelper = new THREE.SpotLightHelper(spotLight);
 // scene.add(helper, spotLightHelper);
@@ -84,59 +100,24 @@ scene.add(spotLight.target);
 // Floor
 // ---------------------------------------------------
 
-const floorGeometry =
-    new THREE.PlaneGeometry(40, 40);
+// const floorGeometry =
+//     new THREE.PlaneGeometry(40, 40);
 
-const floorMaterial =
-    new THREE.MeshBasicMaterial({
-        color: 0x444444
-    });
+// const floorMaterial =
+//     new THREE.MeshBasicMaterial({
+//         color: 0x444444
+//     });
 
-const floor =
-    new THREE.Mesh(
-        floorGeometry,
-        floorMaterial
-    );
+// const floor =
+//     new THREE.Mesh(
+//         floorGeometry,
+//         floorMaterial
+//     );
 
-floor.rotation.x = -Math.PI / 2;
-floor.receiveShadow = true;
+// floor.rotation.x = -Math.PI / 2;
+// floor.receiveShadow = true;
 
-scene.add(floor);
-
-// ---------------------------------------------------
-// Object Labels
-// ---------------------------------------------------
-
-function createPedestal(x, z) {
-
-    const geo =
-        new THREE.CylinderGeometry(
-            0.8,
-            0.8,
-            1,
-            32
-        );
-
-    const mat =
-        new THREE.MeshBasicMaterial({
-            color: 0x999999
-        });
-
-    const pedestal =
-        new THREE.Mesh(geo, mat);
-
-    pedestal.position.set(x, 0.5, z);
-
-    pedestal.castShadow = true;
-    pedestal.receiveShadow = true;
-
-    scene.add(pedestal);
-}
-
-function placeOnPedestal(object, x, z) {
-    object.geometry.computeBoundingBox();
-    object.position.set(x, 1 - object.geometry.boundingBox.min.y, z);
-}
+// scene.add(floor);
 
 // ---------------------------------------------------
 // Materials
@@ -244,11 +225,75 @@ const pyramidMaterial =
         metalness: 0.9,
         roughness: 0.4
     });
+
 // ---------------------------------------------------
-// Row 1
+// CONTROLLABLE SHIP 
 // ---------------------------------------------------
 
-createPedestal(-9, -4);
+
+
+const ship = new THREE.Group();
+const bodyGeometry = new THREE.CylinderGeometry( 0.5, 0.5, 3, 32 );
+const bodyMaterial = new THREE.MeshBasicMaterial( { color: 0xf00000 } );
+const cylinder = new THREE.Mesh( bodyGeometry, bodyMaterial );
+
+cylinder.position.y = -0.4;
+
+ship.add( cylinder );
+
+
+// Nose Cone
+const coneGeometry = new THREE.ConeGeometry(0.7, 1.2, 32);
+const coneMaterial = new THREE.MeshBasicMaterial( { color: 0xffffff } );
+const cone = new THREE.Mesh(coneGeometry, coneMaterial );
+
+// MOVE NOSE UP
+cone.position.y = 1.5;
+
+// ADD TO SHIP
+ship.add( cone );
+
+
+// Flame
+const flameGeometry = new THREE.ConeGeometry(0.4, 1.7, 32);
+const flameMaterial = new THREE.MeshBasicMaterial( { color: 0xFF7F00});
+const FLAMESOFHADES = new THREE.Mesh(flameGeometry, flameMaterial);
+
+FLAMESOFHADES.position.y = -2.8;
+FLAMESOFHADES.rotation.z = 3.145;
+
+ship.add(FLAMESOFHADES);
+
+// Left Fin (Bonus)
+const leftFinGeometry = new THREE.TetrahedronGeometry(0.5);
+const leftFinMaterial = new THREE.MeshBasicMaterial( { color: 0xffffff } );
+const leftFin = new THREE.Mesh( leftFinGeometry, leftFinMaterial );
+
+leftFin.position.y = -1.7;
+leftFin.position.x = -0.6;
+leftFin.rotation.z = 2;
+
+ship.add( leftFin );
+
+
+// Right Fin (Bonus)
+const rightFinGeometry = new THREE.TetrahedronGeometry(0.5);
+const rightFinMaterial = new THREE.MeshBasicMaterial( { color: 0xffffff } );
+const rightFin = new THREE.Mesh( rightFinGeometry, rightFinMaterial );
+
+rightFin.position.y = -1.7;
+rightFin.position.x = 0.6;
+rightFin.rotation.z = 2.75;     //these rotations took so long to brute force-
+
+ship.add( rightFin );
+
+ship.position.set(0, 1, 0);
+ship.rotateX(-Math.PI / 2);
+scene.add(ship);
+
+// ---------------------------------------------------
+// OBJECTS
+// ---------------------------------------------------
 
 const sphere =
     new THREE.Mesh(
@@ -256,12 +301,10 @@ const sphere =
         goldMaterial
     );
 
-placeOnPedestal(sphere, -9, -4);
 sphere.castShadow = true;
 
 scene.add(sphere);
 
-createPedestal(-3, -4);
 
 const cube =
     new THREE.Mesh(
@@ -269,117 +312,17 @@ const cube =
         plasticMaterial
     );
 
-placeOnPedestal(cube, -3, -4);
 cube.castShadow = true;
 
 scene.add(cube);
 
-createPedestal(3, -4);
-
-const crystal =
-    new THREE.Mesh(
-        new THREE.OctahedronGeometry(1.5),
-        crystalMaterial
-    );
-
-placeOnPedestal(crystal, 3, -4);
-crystal.castShadow = true;
-
-scene.add(crystal);
-
-createPedestal(9, -4);
-
-const statue =
-    new THREE.Mesh(
-        new THREE.ConeGeometry(1,3,32),
-        cartoonMaterial
-    );
-
-placeOnPedestal(statue, 9, -4);
-statue.castShadow = true;
-
-scene.add(statue);
-
-// ---------------------------------------------------
-// Row 2
-// ---------------------------------------------------
-
-createPedestal(-9, 5);
-
-const torus =
-    new THREE.Mesh(
-        new THREE.TorusGeometry(
-            1,
-            0.4,
-            16,
-            100
-        ),
-        donutMaterial
-    );
-
-placeOnPedestal(torus, -9, 5);
-torus.castShadow = true;
-
-scene.add(torus);
-
-createPedestal(-3, 5);
-
-const pyramid =
-    new THREE.Mesh(
-        new THREE.ConeGeometry(
-            1.5,
-            3,
-            4
-        ),
-        pyramidMaterial
-    );
-
-placeOnPedestal(pyramid, -3, 5);
-
-scene.add(pyramid);
-
-createPedestal(3, 5);
-
-const normalObject =
-    new THREE.Mesh(
-        new THREE.TorusKnotGeometry(
-            0.8,
-            0.3,
-            100,
-            16
-        ),
-        knotMaterial
-    );
-
-placeOnPedestal(normalObject, 3, 5);
-normalObject.castShadow = true;
-
-scene.add(normalObject);
-
-createPedestal(9, 5);
-
-const tree =
-    new THREE.Mesh(
-        new THREE.CylinderGeometry(
-            1,
-            1,
-            3,
-            6
-        ),
-        treeMaterial
-    );
-
-placeOnPedestal(tree, 9, 5);
-tree.castShadow = true;
-
-scene.add(tree);
 
 // ---------------------------------------------------
 // Mystery Object
 // Students pick the material.
 // ---------------------------------------------------
 
-createPedestal(0, 0);
+
 
 const mystery =
     new THREE.Mesh(
@@ -387,7 +330,7 @@ const mystery =
         dodecahedronMaterial
     );
 
-placeOnPedestal(mystery, 0, 0);
+
 mystery.castShadow = true;
 
 scene.add(mystery);
@@ -402,19 +345,27 @@ function animate() {
 
     sphere.rotation.y += 0.01;
     cube.rotation.y += 0.01;
-    crystal.rotation.y += 0.01;
-    statue.rotation.y += 0.01;
-
-    torus.rotation.x += 0.01;
-    torus.rotation.y += 0.01;
-
-    pyramid.rotation.y += 0.01;
-    normalObject.rotation.y += 0.01;
-    tree.rotation.y += 0.01;
 
     mystery.rotation.y += 0.01;
 
     controls.update();
+
+    // Arrow Key Controls
+    if (keys["arrowup"]) {
+        ship.position.z -= speed;
+    }
+
+    if (keys["arrowdown"]) {
+        ship.position.z += speed;
+    }
+
+    if (keys["arrowleft"]) {
+        ship.position.x -= speed;
+    }
+
+    if (keys["arrowright"]) {
+        ship.position.x += speed;
+    }
 
     renderer.render(scene, camera);
 }
