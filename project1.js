@@ -61,40 +61,18 @@ const speed = 0.1;
 
 const ambientLight = new THREE.AmbientLight(
     0xffffff,
-    0.4
+    0.2
 );
 
 scene.add(ambientLight);
 
-const pointLight = new THREE.PointLight(
+const sunLight = new THREE.PointLight(
     0xffffff,
-    200
+    300
 );
 
-pointLight.position.set(5, 10, 5);
-
-pointLight.castShadow = true;
-
-scene.add(pointLight);
-
-const helper = new THREE.PointLightHelper(
-    pointLight,
-    0.5
-);
-
-// // placed above the gold sphere
-// const spotLight = new THREE.SpotLight(
-//     0xffffff,
-//     100
-// );
-// spotLight.castShadow = true;
-// spotLight.position.set(-9, 8, -4);
-// spotLight.target.position.set(-9, 2, -4);
-// scene.add(spotLight);
-// scene.add(spotLight.target);
-
-// const spotLightHelper = new THREE.SpotLightHelper(spotLight);
-// scene.add(helper, spotLightHelper);
+sunLight.position.set(0, 1, 0);
+scene.add(sunLight);
 
 // ---------------------------------------------------
 // Floor
@@ -234,7 +212,7 @@ const pyramidMaterial =
 
 const ship = new THREE.Group();
 const bodyGeometry = new THREE.CylinderGeometry( 0.5, 0.5, 3, 32 );
-const bodyMaterial = new THREE.MeshBasicMaterial( { color: 0xf00000 } );
+const bodyMaterial = new THREE.MeshStandardMaterial( { color: 0xf00000 } );
 const cylinder = new THREE.Mesh( bodyGeometry, bodyMaterial );
 
 cylinder.position.y = -0.4;
@@ -244,7 +222,7 @@ ship.add( cylinder );
 
 // Nose Cone
 const coneGeometry = new THREE.ConeGeometry(0.7, 1.2, 32);
-const coneMaterial = new THREE.MeshBasicMaterial( { color: 0xffffff } );
+const coneMaterial = new THREE.MeshStandardMaterial( { color: 0xffffff } );
 const cone = new THREE.Mesh(coneGeometry, coneMaterial );
 
 // MOVE NOSE UP
@@ -266,7 +244,7 @@ ship.add(FLAMESOFHADES);
 
 // Left Fin (Bonus)
 const leftFinGeometry = new THREE.TetrahedronGeometry(0.5);
-const leftFinMaterial = new THREE.MeshBasicMaterial( { color: 0xffffff } );
+const leftFinMaterial = new THREE.MeshStandardMaterial( { color: 0xffffff } );
 const leftFin = new THREE.Mesh( leftFinGeometry, leftFinMaterial );
 
 leftFin.position.y = -1.7;
@@ -278,7 +256,7 @@ ship.add( leftFin );
 
 // Right Fin (Bonus)
 const rightFinGeometry = new THREE.TetrahedronGeometry(0.5);
-const rightFinMaterial = new THREE.MeshBasicMaterial( { color: 0xffffff } );
+const rightFinMaterial = new THREE.MeshStandardMaterial( { color: 0xffffff } );
 const rightFin = new THREE.Mesh( rightFinGeometry, rightFinMaterial );
 
 rightFin.position.y = -1.7;
@@ -295,15 +273,17 @@ scene.add(ship);
 // OBJECTS
 // ---------------------------------------------------
 
-const sphere =
+const sun =
     new THREE.Mesh(
-        new THREE.SphereGeometry(1, 32, 32),
-        goldMaterial
+        new THREE.SphereGeometry(2, 32, 32),
+        yellowMaterial
     );
 
-sphere.castShadow = true;
+sun.castShadow = true;
 
-scene.add(sphere);
+sun.position.set(0, 1, 0);
+scene.add(sun);
+
 
 
 const cube =
@@ -314,6 +294,7 @@ const cube =
 
 cube.castShadow = true;
 
+cube.position.set(5, 1, 0);
 scene.add(cube);
 
 
@@ -332,7 +313,7 @@ const mystery =
 
 
 mystery.castShadow = true;
-
+mystery.position.set(-5, 1, 0);
 scene.add(mystery);
 
 // ---------------------------------------------------
@@ -343,7 +324,7 @@ function animate() {
 
     requestAnimationFrame(animate);
 
-    sphere.rotation.y += 0.01;
+    sun.rotation.y += 0.01;
     cube.rotation.y += 0.01;
 
     mystery.rotation.y += 0.01;
@@ -360,7 +341,7 @@ function animate() {
     if (keys["arrowdown"]) {
         ship.position.z += speed;
         // point the ship in the direction of movement
-        ship.rotation.z += (Math.PI - ship.rotation.x) * 0.1; // Point forward
+        ship.rotation.z += (Math.PI - ship.rotation.z) * 0.1; // Point forward
     }
 
     if (keys["arrowleft"]) {
