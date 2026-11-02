@@ -353,18 +353,24 @@ function animate() {
     // Arrow Key Controls
     if (keys["arrowup"]) {
         ship.position.z -= speed;
+        // point the ship in the direction of movement slowly
+        ship.rotation.z += (0 - ship.rotation.z) * 0.1; // Point forward
     }
 
     if (keys["arrowdown"]) {
         ship.position.z += speed;
+        // point the ship in the direction of movement
+        ship.rotation.z += (Math.PI - ship.rotation.x) * 0.1; // Point forward
     }
 
     if (keys["arrowleft"]) {
         ship.position.x -= speed;
+        ship.rotation.z += (Math.PI / 2 - ship.rotation.z) * 0.1; // Point left
     }
 
     if (keys["arrowright"]) {
         ship.position.x += speed;
+        ship.rotation.z += (-Math.PI / 2 - ship.rotation.z) * 0.1; // Point right
     }
 
     renderer.render(scene, camera);
