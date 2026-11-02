@@ -116,9 +116,10 @@ const greenMaterial =
         color: 0x2ecc71
     });
 
-const cyanMaterial =
-    new THREE.MeshBasicMaterial({
-        color: 0x00bcd4
+const moonMaterial =
+    new THREE.MeshStandardMaterial({
+        color: 0xdedede,
+        roughness: 0.5
     });
 
 const redMaterial =
@@ -309,7 +310,19 @@ earth.castShadow = true;
 earth.position.set(5, 1, 0);
 scene.add(earth);
 
+// ---------------------------------------------------
+// Moon
+// ---------------------------------------------------
 
+const moon =
+    new THREE.Mesh(
+        new THREE.SphereGeometry(0.5, 32, 32),
+        moonMaterial
+    );
+
+moon.castShadow = true;
+moon.position.set(8, 1, 0);
+scene.add(moon);
 
 
 
@@ -343,12 +356,21 @@ function animate() {
     requestAnimationFrame(animate);
 
     sun.rotation.y += 0.01;
-    earth.rotation.y += 0.03;
 
     //earth orbits around the sun
     earthOrbitAngle += 0.01;
     earth.position.x = sun.position.x + earthOrbitRadius * Math.cos(earthOrbitAngle)
     earth.position.z = sun.position.z + earthOrbitRadius * Math.sin(earthOrbitAngle);
+    // axis rotation
+    earth.rotation.y += 0.03;
+
+    //moon orbits around the earth
+    moon.position.x = earth.position.x + 3 * Math.cos(earthOrbitAngle * 2);
+    moon.position.z = earth.position.z + 3 * Math.sin(earthOrbitAngle * 2);
+    // axis rotation
+    moon.rotation.y += 0.03;
+
+
 
     mystery.rotation.y += 0.01;
 
