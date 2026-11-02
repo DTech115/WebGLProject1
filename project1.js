@@ -112,7 +112,7 @@ const earthMaterial =
     });
 
 const greenMaterial =
-    new THREE.MeshBasicMaterial({
+    new THREE.MeshLambertMaterial({
         color: 0x2ecc71
     });
 
@@ -290,17 +290,27 @@ sun.position.set(0, 1, -5);
 scene.add(sun);
 
 
+// ---------------------------------------------------
+// Earth
+// ---------------------------------------------------
+const earth = new THREE.Group();
 
-const earth =
-    new THREE.Mesh(
-        new THREE.SphereGeometry(1, 32, 32),
-        earthMaterial
-    );
+const earthOceanGeometry = new THREE.SphereGeometry(1, 32, 32);
+const earthOceanMesh = new THREE.Mesh(earthOceanGeometry, earthMaterial);
+
+const earthLandGeometry = new THREE.TorusKnotGeometry(0.2, 0.8);
+const earthLandMesh = new THREE.Mesh(earthLandGeometry, greenMaterial);
+
+earth.add(earthOceanMesh);
+earth.add(earthLandMesh);
 
 earth.castShadow = true;
 
 earth.position.set(5, 1, 0);
 scene.add(earth);
+
+
+
 
 
 // ---------------------------------------------------
