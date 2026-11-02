@@ -106,6 +106,11 @@ const yellowMaterial =
         color: 0xffd43b
     });
 
+const earthMaterial =
+    new THREE.MeshLambertMaterial({
+        color: 0x3eb8fc
+    });
+
 const greenMaterial =
     new THREE.MeshBasicMaterial({
         color: 0x2ecc71
@@ -275,27 +280,27 @@ scene.add(ship);
 
 const sun =
     new THREE.Mesh(
-        new THREE.SphereGeometry(2, 32, 32),
+        new THREE.SphereGeometry(3, 32, 32),
         yellowMaterial
     );
 
 sun.castShadow = true;
 
-sun.position.set(0, 1, 0);
+sun.position.set(0, 1, -5);
 scene.add(sun);
 
 
 
-const cube =
+const earth =
     new THREE.Mesh(
-        new THREE.BoxGeometry(2,2,2),
-        plasticMaterial
+        new THREE.SphereGeometry(1, 32, 32),
+        earthMaterial
     );
 
-cube.castShadow = true;
+earth.castShadow = true;
 
-cube.position.set(5, 1, 0);
-scene.add(cube);
+earth.position.set(5, 1, 0);
+scene.add(earth);
 
 
 // ---------------------------------------------------
@@ -320,12 +325,20 @@ scene.add(mystery);
 // Animation
 // ---------------------------------------------------
 
+let earthOrbitAngle = 0;
+const earthOrbitRadius = 10;
+
 function animate() {
 
     requestAnimationFrame(animate);
 
     sun.rotation.y += 0.01;
-    cube.rotation.y += 0.01;
+    earth.rotation.y += 0.03;
+
+    //earth orbits around the sun
+    earthOrbitAngle += 0.01;
+    earth.position.x = sun.position.x + earthOrbitRadius * Math.cos(earthOrbitAngle)
+    earth.position.z = sun.position.z + earthOrbitRadius * Math.sin(earthOrbitAngle);
 
     mystery.rotation.y += 0.01;
 
