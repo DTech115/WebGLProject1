@@ -107,14 +107,19 @@ const mercuryMaterial =
         roughness: 0.7
     });
 
-const whiteMaterial =
-    new THREE.MeshBasicMaterial({
-        color: 0xf5f5f5
+const venusMaterial =
+    new THREE.MeshPhysicalMaterial({
+        color: 0xff8c42,
+        metalness: 0.5,
+        roughness: 0.5,
+        ior: 1.5,
+        iridescence: 0.5
     });
 
-const orangeMaterial =
-    new THREE.MeshBasicMaterial({
-        color: 0xff8c42
+const marsMaterial =
+    new THREE.MeshLambertMaterial({
+        color: 0xff4500,
+        roughness: 0.5
     });
 
 const magentaMaterial =
@@ -160,11 +165,12 @@ const knotMaterial =
     new THREE.MeshNormalMaterial({
     });
 
-const dodecahedronMaterial =
+const asteroidMaterial =
     new THREE.MeshPhysicalMaterial({
-        color: 0xffffff,
+        color: 0x888888,
         metalness: 0.5,
-        roughness: 0.5,
+        roughness: 0.8,
+        reflectivity: 0.5
     });
 
 const crystalMaterial =
@@ -276,9 +282,7 @@ sun.position.set(0, 1, -5);
 scene.add(sun);
 
 
-// ---------------------------------------------------
 // Earth
-// ---------------------------------------------------
 const earth = new THREE.Group();
 
 const earthOceanGeometry = new THREE.SphereGeometry(1, 32, 32);
@@ -296,9 +300,8 @@ earth.receiveShadow = true;
 earth.position.set(5, 1, 0);
 scene.add(earth);
 
-// ---------------------------------------------------
+
 // Moon
-// ---------------------------------------------------
 
 const moon =
     new THREE.Mesh(
@@ -311,13 +314,12 @@ moon.receiveShadow = true;
 moon.position.set(8, 1, 0);
 scene.add(moon);
 
-// ---------------------------------------------------
+
 // Mercury
-// ---------------------------------------------------
 
 const mercury =
     new THREE.Mesh(
-        new THREE.SphereGeometry(0.5, 32, 32),
+        new THREE.SphereGeometry(0.7, 32, 32),
         mercuryMaterial
     );
 
@@ -326,32 +328,68 @@ mercury.receiveShadow = true;
 mercury.position.set(0, 1, -10);
 scene.add(mercury);
 
+// Venus
 
-// ---------------------------------------------------
-// Mystery Object
-// Students pick the material.
-// ---------------------------------------------------
-
-
-
-const mystery =
+const venus =
     new THREE.Mesh(
-        new THREE.DodecahedronGeometry(1.5),
-        dodecahedronMaterial
+        new THREE.SphereGeometry(1, 32, 32),
+        venusMaterial
     );
 
+venus.castShadow = true;
+venus.receiveShadow = true;
+venus.position.set(0, 1, 10);
+scene.add(venus);
 
-mystery.castShadow = true;
-mystery.position.set(-5, 1, 0);
-scene.add(mystery);
+// Mars
+
+const mars =
+    new THREE.Mesh(
+        new THREE.SphereGeometry(0.8, 32, 32),
+        marsMaterial
+    );
+
+mars.castShadow = true;
+mars.receiveShadow = true;
+mars.position.set(0, 1, 10);
+scene.add(mars);
+
+// asteroid belt
+const asteroidBelt = new THREE.Group();
+
+for (let i = 0; i < 200; i++) {
+    const asteroidGeometry = new THREE.DodecahedronGeometry(0.2, 0);
+    const asteroid = new THREE.Mesh(asteroidGeometry, asteroidMaterial);
+
+    // random position in a ring around the sun
+    const angle = Math.random() * Math.PI * 2;
+    const radius = 20 + Math.random() * 3;
+    asteroid.position.set(
+        radius * Math.cos(angle),
+        1,
+        radius * Math.sin(angle)
+    );
+
+    asteroid.castShadow = true;
+    asteroid.receiveShadow = true;
+
+    asteroidBelt.add(asteroid);
+}
+
+scene.add(asteroidBelt);
 
 // ---------------------------------------------------
 // Animation
 // ---------------------------------------------------
 
-let orbitAngle = 0;
-const earthOrbitRadius = 10;
-const mercuryOrbitRadius = 4;
+let earthOrbitAngle = 1;
+const earthOrbitRadius = 13;
+let mercuryOrbitAngle = 4;
+const mercuryOrbitRadius = 5;
+let venusOrbitAngle = 8;
+const venusOrbitRadius = 8;
+let marsOrbitAngle = 2;
+const marsOrbitRadius = 18;
 
 function animate() {
 
@@ -360,27 +398,41 @@ function animate() {
     sun.rotation.y += 0.01;
 
     //earth orbits around the sun
-    orbitAngle += 0.005;
-    earth.position.x = sun.position.x + earthOrbitRadius * Math.cos(orbitAngle)
-    earth.position.z = sun.position.z + earthOrbitRadius * Math.sin(orbitAngle);
+    earthOrbitAngle += 0.005;
+    earth.position.x = sun.position.x + earthOrbitRadius * Math.cos(earthOrbitAngle);
+    earth.position.z = sun.position.z + earthOrbitRadius * Math.sin(earthOrbitAngle);
     // axis rotation
     earth.rotation.y += 0.03;
 
     //moon orbits around the earth
-    moon.position.x = earth.position.x + 3 * Math.cos(orbitAngle * 2);
-    moon.position.z = earth.position.z + 3 * Math.sin(orbitAngle * 2);
+    moon.position.x = earth.position.x + 3 * Math.cos(earthOrbitAngle * 2);
+    moon.position.z = earth.position.z + 3 * Math.sin(earthOrbitAngle * 2);
     // axis rotation
     moon.rotation.y += 0.03;
 
     //mercury orbits around the sun
-    mercury.position.x = sun.position.x + mercuryOrbitRadius * Math.cos(orbitAngle * 1.5);
-    mercury.position.z = sun.position.z + mercuryOrbitRadius * Math.sin(orbitAngle * 1.5);
+    mercuryOrbitAngle += 0.008;
+    mercury.position.x = sun.position.x + mercuryOrbitRadius * Math.cos(mercuryOrbitAngle * 1.5);
+    mercury.position.z = sun.position.z + mercuryOrbitRadius * Math.sin(mercuryOrbitAngle * 1.5);
     // axis rotation
     mercury.rotation.y += 0.03;
 
+    //venus orbits around the sun
+    venusOrbitAngle += 0.006;
+    venus.position.x = sun.position.x + venusOrbitRadius * Math.cos(venusOrbitAngle * 1.2);
+    venus.position.z = sun.position.z + venusOrbitRadius * Math.sin(venusOrbitAngle * 1.2);
+    // axis rotation
+    venus.rotation.y += 0.03;
 
+    //mars orbits around the sun
+    marsOrbitAngle += 0.005;
+    mars.position.x = sun.position.x + marsOrbitRadius * Math.cos(marsOrbitAngle * 0.8);
+    mars.position.z = sun.position.z + marsOrbitRadius * Math.sin(marsOrbitAngle * 0.8);
+    // axis rotation
+    mars.rotation.y += 0.03;
 
-    mystery.rotation.y += 0.01;
+    // asteroid belt rotates around the sun slowly
+    asteroidBelt.rotation.y += 0.0007;
 
     controls.update();
 
