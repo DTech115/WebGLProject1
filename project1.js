@@ -61,7 +61,7 @@ const speed = 0.07;
 
 const ambientLight = new THREE.AmbientLight(
     0xffffff,
-    0.2
+    0.3
 );
 
 scene.add(ambientLight);
@@ -139,7 +139,9 @@ const marsMaterial =
 const jupiterMaterial =
     new THREE.MeshStandardMaterial({
         color: 0xf4a460,
-        roughness: 0.5
+        roughness: 0.5,
+        transparent: true,
+        opacity: 0.8
     });
 
 const saturnMaterial =
@@ -156,18 +158,21 @@ const saturnRingMaterial =
     });
 
 const uranusMaterial =
-    new THREE.MeshToonMaterial({
-        color: 0x00ffff
+    new THREE.MeshPhysicalMaterial({
+        color: 0x00ffff,
+        clearcoat: 1,
+        iridescence: 0.5
     });
 
 const neptuneMaterial =
-    new THREE.MeshStandardMaterial({
+    new THREE.MeshToonMaterial({
         color: 0x0000ff,
-        roughness: 0.5
     });
 
-const knotMaterial =
-    new THREE.MeshNormalMaterial({
+const plutoMaterial =
+    new THREE.MeshStandardMaterial({
+        color: 0xa18662,
+        roughness: 0.5
     });
 
 const asteroidMaterial =
@@ -439,6 +444,18 @@ neptune.receiveShadow = true;
 neptune.position.set(57, 1, 0);
 scene.add(neptune);
 
+// pluto
+const pluto =
+    new THREE.Mesh(
+        new THREE.SphereGeometry(0.5, 32, 32),
+        plutoMaterial
+    );
+
+pluto.castShadow = true;
+pluto.receiveShadow = true;
+pluto.position.set(60, 1, 0);
+scene.add(pluto);
+
 
 // ---------------------------------------------------
 // Animation
@@ -457,9 +474,14 @@ const jupiterOrbitRadius = 35;
 let saturnOrbitAngle = 13;
 const saturnOrbitRadius = 45;
 let uranusOrbitAngle = 18;
-const uranusOrbitRadius = 50;
+const uranusOrbitRadius = 47;
 let neptuneOrbitAngle = 20;
-const neptuneOrbitRadius = 54;
+const neptuneOrbitRadius = 49;
+// pluto's orbit is a lil funky with a tilt
+let plutoOrbitAngle = 25;
+const plutoLong = 100;
+const plutoShort = 70;
+const plutoTilt = Math.PI / 8;
 
 function animate() {
 
@@ -510,28 +532,38 @@ function animate() {
     jupiter.position.z = sun.position.z + jupiterOrbitRadius * Math.sin(jupiterOrbitAngle * 0.5);
     // axis rotation
     jupiter.rotation.y += 0.01;
-    
 
     // saturn orbits around the sun
-    saturnOrbitAngle += 0.002;
+    saturnOrbitAngle += 0.003;
     saturn.position.x = sun.position.x + saturnOrbitRadius * Math.cos(saturnOrbitAngle * 0.3);
     saturn.position.z = sun.position.z + saturnOrbitRadius * Math.sin(saturnOrbitAngle * 0.3);
     // axis rotation
     saturn.rotation.y += 0.01;
 
     // uranus orbits around the sun
-    uranusOrbitAngle += 0.002;
+    uranusOrbitAngle += 0.003;
     uranus.position.x = sun.position.x + uranusOrbitRadius * Math.cos(uranusOrbitAngle * 0.2);
     uranus.position.z = sun.position.z + uranusOrbitRadius * Math.sin(uranusOrbitAngle * 0.2);
     // axis rotation
     uranus.rotation.y += 0.01;
 
     // neptune orbits around the sun
-    neptuneOrbitAngle += 0.002;
+    neptuneOrbitAngle += 0.003;
     neptune.position.x = sun.position.x + neptuneOrbitRadius * Math.cos(neptuneOrbitAngle * 0.1);
     neptune.position.z = sun.position.z + neptuneOrbitRadius * Math.sin(neptuneOrbitAngle * 0.1);
     // axis rotation
     neptune.rotation.y += 0.01;
+
+    // pluto orbits around the sun
+    plutoOrbitAngle += 0.0015;
+    const flatX = Math.cos(plutoOrbitAngle) * plutoLong;
+    const flatZ = Math.sin(plutoOrbitAngle) * plutoShort;
+    pluto.position.x = sun.position.x + flatX;
+    pluto.position.y = sun.position.y + flatZ * Math.sin(plutoTilt);
+    pluto.position.z = sun.position.z + flatZ * Math.cos(plutoTilt);
+    // axis rotation & tilt
+    pluto.rotation.z = Math.PI * 2 / 3;
+    pluto.rotateY(-0.02);
 
     controls.update();
 
@@ -557,6 +589,8 @@ function animate() {
         ship.position.x += speed;
         ship.rotation.z += (-Math.PI / 2 - ship.rotation.z) * 0.1; // Point right
     }
+
+    // third-person camera follows the ship
 
     renderer.render(scene, camera);
 }
