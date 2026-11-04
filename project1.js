@@ -53,7 +53,7 @@ window.addEventListener("keyup", (event) => {
 });
 
 // Movement Speed
-const speed = 0.1;
+const speed = 0.07;
 
 // ---------------------------------------------------
 // Lights
@@ -74,28 +74,6 @@ const sunLight = new THREE.PointLight(
 sunLight.position.set(0, 1, 0);
 scene.add(sunLight);
 
-// ---------------------------------------------------
-// Floor
-// ---------------------------------------------------
-
-// const floorGeometry =
-//     new THREE.PlaneGeometry(40, 40);
-
-// const floorMaterial =
-//     new THREE.MeshBasicMaterial({
-//         color: 0x444444
-//     });
-
-// const floor =
-//     new THREE.Mesh(
-//         floorGeometry,
-//         floorMaterial
-//     );
-
-// floor.rotation.x = -Math.PI / 2;
-// floor.receiveShadow = true;
-
-// scene.add(floor);
 
 // ---------------------------------------------------
 // Materials
@@ -122,9 +100,11 @@ const moonMaterial =
         roughness: 0.5
     });
 
-const redMaterial =
-    new THREE.MeshBasicMaterial({
-        color: 0xff4d4d
+const mercuryMaterial =
+    new THREE.MeshPhysicalMaterial({
+        color: 0xaaaaaa,
+        metalness: 0.8,
+        roughness: 0.7
     });
 
 const whiteMaterial =
@@ -214,8 +194,6 @@ const pyramidMaterial =
 // CONTROLLABLE SHIP 
 // ---------------------------------------------------
 
-
-
 const ship = new THREE.Group();
 const bodyGeometry = new THREE.CylinderGeometry( 0.5, 0.5, 3, 32 );
 const bodyMaterial = new THREE.MeshStandardMaterial( { color: 0xf00000 } );
@@ -273,6 +251,13 @@ ship.add( rightFin );
 
 ship.position.set(0, 1, 0);
 ship.rotateX(-Math.PI / 2);
+
+// scale down the ship to make it smaller
+ship.scale.set(0.3, 0.3, 0.3);
+
+ship.castShadow = true;
+ship.receiveShadow = true;
+
 scene.add(ship);
 
 // ---------------------------------------------------
@@ -306,6 +291,7 @@ earth.add(earthOceanMesh);
 earth.add(earthLandMesh);
 
 earth.castShadow = true;
+earth.receiveShadow = true;
 
 earth.position.set(5, 1, 0);
 scene.add(earth);
@@ -321,9 +307,24 @@ const moon =
     );
 
 moon.castShadow = true;
+moon.receiveShadow = true;
 moon.position.set(8, 1, 0);
 scene.add(moon);
 
+// ---------------------------------------------------
+// Mercury
+// ---------------------------------------------------
+
+const mercury =
+    new THREE.Mesh(
+        new THREE.SphereGeometry(0.5, 32, 32),
+        mercuryMaterial
+    );
+
+mercury.castShadow = true;
+mercury.receiveShadow = true;
+mercury.position.set(0, 1, -10);
+scene.add(mercury);
 
 
 // ---------------------------------------------------
@@ -348,8 +349,9 @@ scene.add(mystery);
 // Animation
 // ---------------------------------------------------
 
-let earthOrbitAngle = 0;
+let orbitAngle = 0;
 const earthOrbitRadius = 10;
+const mercuryOrbitRadius = 4;
 
 function animate() {
 
@@ -358,17 +360,23 @@ function animate() {
     sun.rotation.y += 0.01;
 
     //earth orbits around the sun
-    earthOrbitAngle += 0.01;
-    earth.position.x = sun.position.x + earthOrbitRadius * Math.cos(earthOrbitAngle)
-    earth.position.z = sun.position.z + earthOrbitRadius * Math.sin(earthOrbitAngle);
+    orbitAngle += 0.005;
+    earth.position.x = sun.position.x + earthOrbitRadius * Math.cos(orbitAngle)
+    earth.position.z = sun.position.z + earthOrbitRadius * Math.sin(orbitAngle);
     // axis rotation
     earth.rotation.y += 0.03;
 
     //moon orbits around the earth
-    moon.position.x = earth.position.x + 3 * Math.cos(earthOrbitAngle * 2);
-    moon.position.z = earth.position.z + 3 * Math.sin(earthOrbitAngle * 2);
+    moon.position.x = earth.position.x + 3 * Math.cos(orbitAngle * 2);
+    moon.position.z = earth.position.z + 3 * Math.sin(orbitAngle * 2);
     // axis rotation
     moon.rotation.y += 0.03;
+
+    //mercury orbits around the sun
+    mercury.position.x = sun.position.x + mercuryOrbitRadius * Math.cos(orbitAngle * 1.5);
+    mercury.position.z = sun.position.z + mercuryOrbitRadius * Math.sin(orbitAngle * 1.5);
+    // axis rotation
+    mercury.rotation.y += 0.03;
 
 
 
