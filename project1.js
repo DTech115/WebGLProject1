@@ -183,22 +183,6 @@ const asteroidMaterial =
         reflectivity: 0.5
     });
 
-const crystalMaterial =
-    new THREE.MeshStandardMaterial({
-        color: 0x99999ff,
-        metalness: 0.3,
-        roughness: 0.1,
-        transparent: true,
-        opacity: 0.7
-    });
-
-const donutMaterial =
-    new THREE.MeshStandardMaterial({
-        color: 0xff69b4,
-        metalness: 0.1,
-        roughness: 0.4
-    });
-
 // ---------------------------------------------------
 // CONTROLLABLE SHIP 
 // ---------------------------------------------------
@@ -455,6 +439,28 @@ pluto.castShadow = true;
 pluto.receiveShadow = true;
 pluto.position.set(60, 1, 0);
 scene.add(pluto);
+
+// stars
+const starGeometry = new THREE.SphereGeometry(0.1, 32, 32);
+for (let i = 0; i < 1000; i++) {
+    const starMaterial = new THREE.MeshBasicMaterial({
+        color: 0xffffff
+    });
+    const star = new THREE.Mesh(starGeometry, starMaterial);
+
+    // random position in a sphere around the scene
+    const radius = 100 + Math.random() * 100;
+    const theta = Math.random() * Math.PI * 2;
+    const phi = Math.random() * Math.PI;
+
+    star.position.set(
+        radius * Math.sin(phi) * Math.cos(theta),
+        radius * Math.sin(phi) * Math.sin(theta),
+        radius * Math.cos(phi)
+    );
+
+    scene.add(star);
+}
 
 
 // ---------------------------------------------------
