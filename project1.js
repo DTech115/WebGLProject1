@@ -66,13 +66,27 @@ const ambientLight = new THREE.AmbientLight(
 
 scene.add(ambientLight);
 
+// sunlight from the sun
 const sunLight = new THREE.PointLight(
     0xffffff,
-    300
+    400
 );
 
 sunLight.position.set(0, 1, 0);
 scene.add(sunLight);
+
+// ship spot light from nose
+const shipLight = new THREE.SpotLight(
+    0xffffff,
+    300
+);
+
+shipLight.position.set(0, 2.2, 0);
+shipLight.angle = Math.PI / 6;
+shipLight.penumbra = 1;
+shipLight.distance = 20;
+
+shipLight.target.position.set(0, 10, 0);
 
 
 // ---------------------------------------------------
@@ -122,42 +136,23 @@ const marsMaterial =
         roughness: 0.5
     });
 
-const magentaMaterial =
-    new THREE.MeshBasicMaterial({
-        color: 0xff4fd8
-    });
-
-const purpleMaterial =
-    new THREE.MeshBasicMaterial({
-        color: 0x9b59b6
-    });
-
-const blueMaterial =
-    new THREE.MeshBasicMaterial({
-        color: 0x4169e1
-    });
-
 const jupiterMaterial =
     new THREE.MeshStandardMaterial({
         color: 0xf4a460,
         roughness: 0.5
     });
 
-const plasticMaterial = 
-    new THREE.MeshPhongMaterial({
-        color: 0x00bcd4,
-        shininess: 100
+const saturnMaterial =
+    new THREE.MeshStandardMaterial({
+        color: 0xf5deb3,
+        roughness: 0.5
     });
 
-const cartoonMaterial =
-    new THREE.MeshToonMaterial({
-        color: 0xff4fd8,
-        shininess: 100
-    });
-
-const treeMaterial = 
-    new THREE.MeshLambertMaterial({
-        color: 0x2ecc71,
+const saturnRingMaterial =
+    new THREE.MeshStandardMaterial({
+        color: 0xd2b48c,
+        roughness: 0.5,
+        side: THREE.DoubleSide
     });
 
 const knotMaterial =
@@ -185,13 +180,6 @@ const donutMaterial =
     new THREE.MeshStandardMaterial({
         color: 0xff69b4,
         metalness: 0.1,
-        roughness: 0.4
-    });
-
-const pyramidMaterial =
-    new THREE.MeshStandardMaterial({
-        color: 0x4169e1,
-        metalness: 0.9,
         roughness: 0.4
     });
 
@@ -262,6 +250,10 @@ ship.scale.set(0.3, 0.3, 0.3);
 
 ship.castShadow = true;
 ship.receiveShadow = true;
+
+// shiplight from before
+ship.add(shipLight);
+ship.add(shipLight.target);
 
 scene.add(ship);
 
@@ -393,6 +385,23 @@ jupiter.receiveShadow = true;
 jupiter.position.set(-30, 1, 0);
 scene.add(jupiter);
 
+// saturn
+const saturn =
+    new THREE.Mesh(
+        new THREE.SphereGeometry(1.5, 32, 32),
+        saturnMaterial
+    );
+
+saturn.castShadow = true;
+saturn.receiveShadow = true;
+saturn.position.set(45, 1, 0);
+scene.add(saturn);
+
+// saturn ring
+const saturnRingGeometry = new THREE.RingGeometry(2, 3, 32);
+const saturnRing = new THREE.Mesh(saturnRingGeometry, saturnRingMaterial);
+saturnRing.rotation.x = Math.PI / 2;
+saturn.add(saturnRing);
 
 
 // ---------------------------------------------------
@@ -409,6 +418,8 @@ let marsOrbitAngle = 2;
 const marsOrbitRadius = 18;
 let jupiterOrbitAngle = 10;
 const jupiterOrbitRadius = 35;
+let saturnOrbitAngle = 13;
+const saturnOrbitRadius = 45;
 
 function animate() {
 
@@ -453,12 +464,20 @@ function animate() {
     // asteroid belt rotates around the sun slowly
     asteroidBelt.rotation.y += 0.0007;
 
-    // jupiter rotates on its axis
-    jupiterOrbitAngle += 0.002;
+    // jupiter orbits on its axis
+    jupiterOrbitAngle += 0.003;
     jupiter.position.x = sun.position.x + jupiterOrbitRadius * Math.cos(jupiterOrbitAngle * 0.5);
     jupiter.position.z = sun.position.z + jupiterOrbitRadius * Math.sin(jupiterOrbitAngle * 0.5);
     // axis rotation
     jupiter.rotation.y += 0.01;
+    
+
+    // saturn orbits around the sun
+    saturnOrbitAngle += 0.002;
+    saturn.position.x = sun.position.x + saturnOrbitRadius * Math.cos(saturnOrbitAngle * 0.3);
+    saturn.position.z = sun.position.z + saturnOrbitRadius * Math.sin(saturnOrbitAngle * 0.3);
+    // axis rotation
+    saturn.rotation.y += 0.01;
 
 
     controls.update();
