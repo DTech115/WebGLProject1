@@ -11,7 +11,7 @@ Arrow keys to move your ship!
 
 ## Features:
 Orbiting & revolving planets, each with their own trajectory & speed [Pluto being the most interesting]  
-Controllable rocket ship, equipped with a front light for viewing
-Spinning asteroid belt
-Staaaaars
+Controllable rocket ship, equipped with a front light for viewing  
+Spinning asteroid belt  
+Staaaaars  
 A moon for the earth
