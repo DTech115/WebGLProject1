@@ -155,6 +155,17 @@ const saturnRingMaterial =
         side: THREE.DoubleSide
     });
 
+const uranusMaterial =
+    new THREE.MeshToonMaterial({
+        color: 0x00ffff
+    });
+
+const neptuneMaterial =
+    new THREE.MeshStandardMaterial({
+        color: 0x0000ff,
+        roughness: 0.5
+    });
+
 const knotMaterial =
     new THREE.MeshNormalMaterial({
     });
@@ -359,7 +370,7 @@ for (let i = 0; i < 200; i++) {
     const radius = 23 + Math.random() * 3;
     asteroid.position.set(
         radius * Math.cos(angle),
-        1,
+        0,
         radius * Math.sin(angle)
     );
 
@@ -369,6 +380,7 @@ for (let i = 0; i < 200; i++) {
     asteroidBelt.add(asteroid);
 }
 
+asteroidBelt.position.copy(sun.position);
 scene.add(asteroidBelt);
 
 // GAS GIANTS
@@ -403,6 +415,30 @@ const saturnRing = new THREE.Mesh(saturnRingGeometry, saturnRingMaterial);
 saturnRing.rotation.x = Math.PI / 2;
 saturn.add(saturnRing);
 
+// uranus
+const uranus =
+    new THREE.Mesh(
+        new THREE.SphereGeometry(1.2, 32, 32),
+        uranusMaterial
+    );
+
+uranus.castShadow = true;
+uranus.receiveShadow = true;
+uranus.position.set(50, 1, 0);
+scene.add(uranus);
+
+// neptune
+const neptune =
+    new THREE.Mesh(
+        new THREE.SphereGeometry(1.2, 32, 32),
+        neptuneMaterial
+    );
+
+neptune.castShadow = true;
+neptune.receiveShadow = true;
+neptune.position.set(57, 1, 0);
+scene.add(neptune);
+
 
 // ---------------------------------------------------
 // Animation
@@ -420,6 +456,10 @@ let jupiterOrbitAngle = 10;
 const jupiterOrbitRadius = 35;
 let saturnOrbitAngle = 13;
 const saturnOrbitRadius = 45;
+let uranusOrbitAngle = 18;
+const uranusOrbitRadius = 50;
+let neptuneOrbitAngle = 20;
+const neptuneOrbitRadius = 54;
 
 function animate() {
 
@@ -479,6 +519,19 @@ function animate() {
     // axis rotation
     saturn.rotation.y += 0.01;
 
+    // uranus orbits around the sun
+    uranusOrbitAngle += 0.002;
+    uranus.position.x = sun.position.x + uranusOrbitRadius * Math.cos(uranusOrbitAngle * 0.2);
+    uranus.position.z = sun.position.z + uranusOrbitRadius * Math.sin(uranusOrbitAngle * 0.2);
+    // axis rotation
+    uranus.rotation.y += 0.01;
+
+    // neptune orbits around the sun
+    neptuneOrbitAngle += 0.002;
+    neptune.position.x = sun.position.x + neptuneOrbitRadius * Math.cos(neptuneOrbitAngle * 0.1);
+    neptune.position.z = sun.position.z + neptuneOrbitRadius * Math.sin(neptuneOrbitAngle * 0.1);
+    // axis rotation
+    neptune.rotation.y += 0.01;
 
     controls.update();
 
