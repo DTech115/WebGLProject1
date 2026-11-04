@@ -137,11 +137,10 @@ const blueMaterial =
         color: 0x4169e1
     });
 
-const goldMaterial =
+const jupiterMaterial =
     new THREE.MeshStandardMaterial({
-        color: 0xffcc00,
-        metalness: 0.7,
-        roughness: 0.2
+        color: 0xf4a460,
+        roughness: 0.5
     });
 
 const plasticMaterial = 
@@ -270,6 +269,8 @@ scene.add(ship);
 // OBJECTS
 // ---------------------------------------------------
 
+// ROCKY PLANETS
+
 const sun =
     new THREE.Mesh(
         new THREE.SphereGeometry(3, 32, 32),
@@ -363,7 +364,7 @@ for (let i = 0; i < 200; i++) {
 
     // random position in a ring around the sun
     const angle = Math.random() * Math.PI * 2;
-    const radius = 20 + Math.random() * 3;
+    const radius = 23 + Math.random() * 3;
     asteroid.position.set(
         radius * Math.cos(angle),
         1,
@@ -378,6 +379,22 @@ for (let i = 0; i < 200; i++) {
 
 scene.add(asteroidBelt);
 
+// GAS GIANTS
+
+// jupiter
+const jupiter =
+    new THREE.Mesh(
+        new THREE.SphereGeometry(2, 32, 32),
+        jupiterMaterial
+    );
+
+jupiter.castShadow = true;
+jupiter.receiveShadow = true;
+jupiter.position.set(-30, 1, 0);
+scene.add(jupiter);
+
+
+
 // ---------------------------------------------------
 // Animation
 // ---------------------------------------------------
@@ -390,6 +407,8 @@ let venusOrbitAngle = 8;
 const venusOrbitRadius = 8;
 let marsOrbitAngle = 2;
 const marsOrbitRadius = 18;
+let jupiterOrbitAngle = 10;
+const jupiterOrbitRadius = 35;
 
 function animate() {
 
@@ -433,6 +452,14 @@ function animate() {
 
     // asteroid belt rotates around the sun slowly
     asteroidBelt.rotation.y += 0.0007;
+
+    // jupiter rotates on its axis
+    jupiterOrbitAngle += 0.002;
+    jupiter.position.x = sun.position.x + jupiterOrbitRadius * Math.cos(jupiterOrbitAngle * 0.5);
+    jupiter.position.z = sun.position.z + jupiterOrbitRadius * Math.sin(jupiterOrbitAngle * 0.5);
+    // axis rotation
+    jupiter.rotation.y += 0.01;
+
 
     controls.update();
 
